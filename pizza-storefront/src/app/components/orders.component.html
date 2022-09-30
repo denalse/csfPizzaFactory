@@ -1,0 +1,10 @@
+<div>
+    <!-- <h3 #email>Orders for {{email}}</h3> -->
+
+    <li *ngFor="let x of order ">
+        Orders for: {{ x.email }}
+    </li>
+</div>
+<div>
+    <button type="submit" [routerLink]="['/']">Back to Ordering</button>
+</div>

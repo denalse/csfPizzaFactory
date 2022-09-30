@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, Output } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subject } from 'rxjs';
+
+import { Order } from '../models';
 
 const SIZES: string[] = [
   "Personal - 6 inches",
@@ -19,15 +24,51 @@ const PizzaToppings: string[] = [
 })
 export class MainComponent implements OnInit {
 
+  @Output()
+  onNewOrder = new Subject<Order>()
+
   pizzaSize = SIZES[0]
 
-  constructor() {}
+  form!: FormGroup
+  formArray!: FormArray
+
+  constructor(private fb: FormBuilder, private http: HttpClient) {}
 
   ngOnInit(): void {
+    this.form = this.createForm()
+    
   }
 
   updateSize(size: string) {
     this.pizzaSize = SIZES[parseInt(size)]
   }
+  
+  hasError(ctrlName: string) {
+    return this.form.get(ctrlName)?.hasError('required')
+  }
+
+  createForm(): FormGroup {
+    return this.fb.group ({
+      name: this.fb.control<string>('', [ Validators.required ]),
+      email: this.fb.control<string>('', [ Validators.required, Validators.email ]),
+      size: this.fb.control<any>('', [ Validators.required ]),
+      base: this.fb.control<string>('', [ Validators.required ]),
+      sauce: this.fb.control<string>('', [ Validators.required ]),
+      toppings: this.fb.control<string>('', [ Validators.required ]),
+      comments: this.fb.control<string>('')
+    })
+  }
+
+  processForm() {
+    const placeOrder: Order = this.form.value as Order
+    this.form = this.createForm()
+    this.onNewOrder.next(placeOrder)
+    console.info("button click", placeOrder)
+  }
+
+
+  
+
+
 
 }

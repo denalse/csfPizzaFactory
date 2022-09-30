@@ -1,7 +1,10 @@
 package vttp2022.assessment.csf.orderbackend.models;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 // IMPORTANT: You can add to this class, but you cannot delete its original content
 
@@ -40,4 +43,18 @@ public class Order {
 
 	public void setComments(String comments) { this.comments = comments; }
 	public String getComments() { return this.comments; }
+
+	public static Order populate(SqlRowSet rs) throws SQLException {
+		Order o = new Order();
+		o.setOrderId(rs.getInt("order_id"));
+		o.setName(rs.getString("name"));
+		o.setEmail(rs.getString("email"));
+		o.setSize(rs.getInt("size"));
+		o.setSauce(rs.getString("sauce"));
+		o.setThickCrust(rs.getBoolean("thick_crust"));
+		// o.setToppings(rs.getString("toppings"));
+		o.setComments(rs.getString("comments"));
+
+		return o;
+	}
 }
