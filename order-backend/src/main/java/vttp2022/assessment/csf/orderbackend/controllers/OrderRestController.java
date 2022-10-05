@@ -52,7 +52,7 @@ public class OrderRestController {
                 .build();
         }
 
-        
+
         logger.info("Payload: %s".formatted(payload));
 
         return ResponseEntity.status(HttpStatus.OK).build();    
