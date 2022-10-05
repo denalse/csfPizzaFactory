@@ -1,6 +1,7 @@
 package vttp2022.assessment.csf.orderbackend.models;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,13 +47,18 @@ public class Order {
 
 	public static Order populate(SqlRowSet rs) throws SQLException {
 		Order o = new Order();
-		o.setOrderId(rs.getInt("order_id"));
+		// o.setOrderId(rs.getInt("order_id"));
 		o.setName(rs.getString("name"));
 		o.setEmail(rs.getString("email"));
 		o.setSize(rs.getInt("size"));
 		o.setSauce(rs.getString("sauce"));
 		o.setThickCrust(rs.getBoolean("thick_crust"));
-		// o.setToppings(rs.getString("toppings"));
+		
+		List<String> toppings = new LinkedList<>();
+        String[] toppingArray = rs.getString("toppings").split(",");
+        toppings = Arrays.asList(toppingArray);
+        o.setToppings(toppings);
+
 		o.setComments(rs.getString("comments"));
 
 		return o;

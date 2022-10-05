@@ -9,14 +9,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 export class AppComponent implements OnInit {
 
-  email!: string | null
+  // email!: string | null
   // emailURL!: string
 
 
   constructor(private router: Router, private ar: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.email = this.ar.snapshot.paramMap.get("email"); // Snapshot param
+    // this.email = this.ar.snapshot.paramMap.get("email"); // Snapshot param
   }
 
 }

@@ -1,10 +1,20 @@
 <div>
-    <!-- <h3 #email>Orders for {{email}}</h3> -->
+    <h3>Orders for: {{ this.email }}</h3>
+    <div>
+        <li *ngFor="let x of orderList ">
+            <div *ngIf="x.amount > 0">
+                <h4>Order Id: {{ x.order_id}}</h4>
+                <h4>${{ x.amount | number: "1.2-2" }}</h4>
+            </div>
+        </li>
 
-    <li *ngFor="let x of order ">
-        Orders for: {{ x.email }}
-    </li>
+        <div *ngIf="orderList.length == []">
+            <h4>No orders found for {{ this.email }}</h4>
+        </div>
+
+    </div>
 </div>
+
 <div>
-    <button type="submit" [routerLink]="['/']">Back to Ordering</button>
+    <button type="button" (click)="goBack()">Back to Ordering</button>
 </div>

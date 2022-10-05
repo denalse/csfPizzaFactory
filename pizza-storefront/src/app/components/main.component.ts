@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
+import { PizzaService } from './../pizza.service';
 
+import { Subject } from 'rxjs';
 import { Order } from '../models';
 
 const SIZES: string[] = [
@@ -24,15 +25,14 @@ const PizzaToppings: string[] = [
 })
 export class MainComponent implements OnInit {
 
-  @Output()
-  onNewOrder = new Subject<Order>()
+  onNewOrder = new Subject<any>()
 
   pizzaSize = SIZES[0]
 
   form!: FormGroup
   formArray!: FormArray
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {}
+  constructor(private fb: FormBuilder, private router: Router, private pizzaSvc: PizzaService) {}
 
   ngOnInit(): void {
     this.form = this.createForm()
@@ -54,21 +54,22 @@ export class MainComponent implements OnInit {
       size: this.fb.control<any>('', [ Validators.required ]),
       base: this.fb.control<string>('', [ Validators.required ]),
       sauce: this.fb.control<string>('', [ Validators.required ]),
-      toppings: this.fb.control<string>('', [ Validators.required ]),
+      toppings: this.fb.control<boolean>(false),
       comments: this.fb.control<string>('')
     })
   }
 
   processForm() {
     const placeOrder: Order = this.form.value as Order
-    this.form = this.createForm()
-    this.onNewOrder.next(placeOrder)
     console.info("button click", placeOrder)
+    this.pizzaSvc.createOrder(placeOrder)
+    this.onNewOrder.next(placeOrder.email)
+    this.form = this.createForm()
   }
 
-
-  
-
+  listOrders(){
+    this.router.navigate(['/orders', this.form.get("email")?.value]);
+  }
 
 
 }

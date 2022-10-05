@@ -1,8 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Order, OrderSummary } from '../models';
+import { OrderSummary } from '../models';
 import { PizzaService } from '../pizza.service';
 
 @Component({
@@ -11,60 +10,36 @@ import { PizzaService } from '../pizza.service';
   styleUrls: ['./orders.component.css']
 })
 
-export class OrdersComponent implements OnInit {
+export class OrdersComponent implements OnInit, AfterViewInit {
 
-  @Input()
-  updatedOrder: OrderSummary[] = []
+  orderList: OrderSummary[] = [];
+  email = this.ar.snapshot.params['email'];
 
-  orderList: OrderSummary[] = []
-  
   // list: string[] = []
-  email!: string
-  sub$!: Subscription
+  // sub$!: Subscription
+
+  constructor(private ar: ActivatedRoute, private router: Router, private pizzaSvc: PizzaService) { }
   
-  order!: OrderSummary
+  ngOnInit(): void {
+    this.showOrders(this.ar.snapshot.params['email']);
+  }
+  
+  ngAfterViewInit(): void {
+    this.showOrders(this.ar.snapshot.params['email']);
+  }
+  
+  showOrders(email: string) {
+      this.pizzaSvc.getOrders(email).subscribe((data: any) => {
+        console.info(data);
 
-  constructor(private ar: ActivatedRoute, private title: Title,
-    private pizzaSvc: PizzaService) { }
-    
-    ngOnInit(): void {
-      if (this.ar.snapshot.params['email']) {
-        this.email = this.ar.snapshot.params['email']
-        this.sub$ = this.ar.params.subscribe(e => {
-          console.info('>subscribe: ', e)
-          // @ts-ignore
-          this.email = e.email
-        })
-      }
+        this.orderList = data as any;
 
-      this.order = {
-      email: '',
-      orderId: '',
-      name: '',
-      amount: 0
-    }
-
-    // this.order = this.ar.snapshot.params['email'];
-    // let email_ = this.ar.snapshot.params['email'] || 
-    //   this.ar.snapshot.queryParams['email'];
-    //   if(email_){
-    //     this.email = email_;
-    //   }
-
-
-    console.log("\n>>>>> HIT")
-    console.log(this.updatedOrder);
-    this.orderList = this.updatedOrder;
-
-
-    this.pizzaSvc.getOrders(this.email)
-      .then(result => {
-        console.info('>>>> book: ', result)
-        this.order = result
+        return this.orderList;
       })
-      .catch(error => {
-        console.error('>>>> error: ', error)
-      })
+
   }
 
+  goBack() {
+    this.router.navigate(['/']);
+  }
 }
